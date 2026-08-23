@@ -1,0 +1,5 @@
+google-adk>=2.7.0
+# Misma versión fijada que en mcp_server/requirements.txt: la 2.x de "mcp"
+# no es compatible todavía con google-adk 2.7.x.
+mcp[cli]==1.29.0
+python-dotenv>=1.0.1
