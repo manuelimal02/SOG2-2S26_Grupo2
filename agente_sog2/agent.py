@@ -20,6 +20,8 @@ from dotenv import load_dotenv
 from google.adk.agents import Agent
 from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset
 from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
+from google.adk.tools.tool_context import ToolContext
+from google.genai import types as genai_types
 from mcp import StdioServerParameters
 
 # El .env vive en la raíz del proyecto (mismo archivo que usa el MCPServer),
@@ -32,6 +34,10 @@ load_dotenv(RUTA_ENV, override=True)
 RUTA_MCP_SERVER = os.path.join(
     os.path.dirname(__file__), "..", "mcp_server", "server.py"
 )
+# Carpeta donde el MCPServer guarda los .png que genera (ver mcp_server/server.py).
+CARPETA_GRAFICOS = os.path.join(
+    os.path.dirname(__file__), "..", "mcp_server", "graficos"
+)
 
 herramientas_analisis = MCPToolset(
     connection_params=StdioConnectionParams(
@@ -42,6 +48,40 @@ herramientas_analisis = MCPToolset(
         timeout=30,
     ),
 )
+
+
+async def mostrar_grafico(nombre_archivo: str, tool_context: ToolContext) -> dict:
+    """Muestra en el chat, como imagen, un gráfico que ya haya generado
+    otra herramienta de análisis. Úsala INMEDIATAMENTE después de cualquier
+    herramienta que haya devuelto un campo "grafico" en su resultado,
+    pasándole solo el nombre del archivo (ej. "distribucion_mes.png"),
+    para que el usuario lo vea directamente en el chat en vez de tener
+    que buscarlo manualmente en la carpeta del proyecto.
+
+    Args:
+        nombre_archivo: nombre del archivo .png (sin ruta), tal como
+            aparece al final del campo "grafico" que devolvió la otra tool.
+    """
+    nombre_archivo = os.path.basename(nombre_archivo)
+    ruta = os.path.join(CARPETA_GRAFICOS, nombre_archivo)
+
+    if not os.path.isfile(ruta):
+        return {
+            "mostrado": False,
+            "error": f"No se encontró el archivo {nombre_archivo} en {CARPETA_GRAFICOS}.",
+        }
+
+    with open(ruta, "rb") as f:
+        datos_png = f.read()
+
+    await tool_context.save_artifact(
+        filename=nombre_archivo,
+        artifact=genai_types.Part(
+            inline_data=genai_types.Blob(mime_type="image/png", data=datos_png)
+        ),
+    )
+    return {"mostrado": True, "archivo": nombre_archivo}
+
 
 INSTRUCCIONES = """
 Eres el asistente de análisis de datos de una empresa que vende en línea
@@ -60,12 +100,16 @@ Reglas:
    de la base de datos; nunca inventes cifras.
 2. Si la pregunta puede resolverse con más de una herramienta, usa todas
    las que hagan falta antes de responder.
-3. Resume los resultados en 2-4 oraciones. Menciona un nombre de archivo
-   de gráfico SOLO si la herramienta lo devolvió explícitamente en el
-   campo "grafico" de su respuesta. Si la herramienta no devolvió ese
-   campo, no existe ningún gráfico para esa consulta — no inventes un
-   nombre de archivo bajo ninguna circunstancia.
-4. Si la pregunta no corresponde a ningún análisis disponible, dilo con
+3. Si el resultado de una herramienta incluye un campo "grafico" (ej.
+   "distribucion_mes.png"), DEBES llamar inmediatamente a la herramienta
+   mostrar_grafico con ese nombre de archivo, ANTES de responder al
+   usuario. Así el gráfico aparece directamente en el chat y el usuario
+   no tiene que ir a buscarlo manualmente a ninguna carpeta.
+4. Resume los resultados en 2-4 oraciones. Si ya mostraste el gráfico con
+   mostrar_grafico, no repitas el nombre del archivo en el texto — solo
+   describe lo que muestra. Si una herramienta no devolvió ningún campo
+   "grafico", no inventes que existe un gráfico para esa consulta.
+5. Si la pregunta no corresponde a ningún análisis disponible, dilo con
    claridad en vez de adivinar.
 """
 
@@ -78,5 +122,5 @@ root_agent = Agent(
         "informe de Sistemas Organizacionales y Gerenciales 2."
     ),
     instruction=INSTRUCCIONES,
-    tools=[herramientas_analisis],
+    tools=[herramientas_analisis, mostrar_grafico],
 )
