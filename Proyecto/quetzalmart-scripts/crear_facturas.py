@@ -28,8 +28,8 @@ sesion.post(f"{ODOO_URL}/web/login", data={
 
 verificacion = sesion.get(f"{ODOO_URL}/web")
 if 'login' in verificacion.url:
-    raise Exception("⚠️ El login HTTP falló, revisa usuario/password en config.py")
-print("✅ Login HTTP exitoso, sesión autenticada correctamente")
+    raise Exception("El login HTTP falló, revisa usuario/password en config.py")
+print("Login HTTP exitoso, sesión autenticada correctamente")
 
 
 def descargar_pdf_factura(factura_id, nombre_archivo):
