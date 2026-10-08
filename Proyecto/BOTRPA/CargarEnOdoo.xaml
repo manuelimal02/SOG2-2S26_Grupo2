@@ -1,0 +1,249 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="CargarEnOdoo" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="in_rutaArchivo" Type="InArgument(x:String)" />
+    <x:Property Name="in_tipoImportador" Type="InArgument(x:String)" />
+    <x:Property Name="in_nombreHoja" Type="InArgument(x:String)" />
+  </x:Members>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Validation</x:String>
+      <x:String>System.Activities.XamlIntegration</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>GlobalConstantsNamespace</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Collections</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>PresentationFramework</AssemblyReference>
+      <AssemblyReference>WindowsBase</AssemblyReference>
+      <AssemblyReference>PresentationCore</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="CargarEnOdoo" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="x:String" Default="jdgongorao@gmail.com" Name="emailOdoo" />
+      <Variable x:TypeArguments="x:String" Default="P455w0rdUs3r" Name="passwordOdoo" />
+      <Variable x:TypeArguments="x:Boolean" Name="existeLogin" />
+      <Variable x:TypeArguments="x:Boolean" Name="validacionOk" />
+      <Variable x:TypeArguments="x:Object" Name="atributoHoja" />
+      <Variable x:TypeArguments="x:String" Name="hojaSeleccionadaReal" />
+    </Sequence.Variables>
+    <TryCatch DisplayName="Try Catch - Carga en Odoo" sap2010:WorkflowViewState.IdRef="TryCatch_1">
+      <TryCatch.Try>
+        <Sequence DisplayName="Try" sap2010:WorkflowViewState.IdRef="Sequence_5">
+          <ui:LogMessage DisplayName="Log - Iniciando carga" Level="Info" Message="[&quot;Iniciando carga en Odoo [&quot; &amp; in_tipoImportador &amp; &quot;]: &quot; &amp; in_rutaArchivo]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
+          <ui:OpenBrowser BrowserType="Chrome" DisplayName="Open Browser Odoo" Url="[&quot;http://34.69.227.242:8069/odoo/&quot; &amp; in_tipoImportador]" sap2010:WorkflowViewState.IdRef="OpenBrowser_1">
+            <ui:OpenBrowser.Body>
+              <ActivityAction x:TypeArguments="x:Object">
+                <ActivityAction.Argument>
+                  <DelegateInArgument x:TypeArguments="x:Object" Name="ContextTarget" />
+                </ActivityAction.Argument>
+                <Sequence DisplayName="Do" sap2010:WorkflowViewState.IdRef="Sequence_2">
+                  <ui:UiElementExists DisplayName="TODO Indicate — Element Exists: ¿aparece login?" sap2010:Annotation.AnnotationText="VERIFICAR SELECTOR - pendiente de corregir con Indicate on screen" sap2010:WorkflowViewState.IdRef="UiElementExists_1">
+                    <ui:UiElementExists.Exists>
+                      <OutArgument x:TypeArguments="x:Boolean">[existeLogin]</OutArgument>
+                    </ui:UiElementExists.Exists>
+                    <ui:UiElementExists.Target>
+                      <ui:Target Selector="&lt;webctrl id='login' tag='INPUT' /&gt;" WaitForReady="COMPLETE" />
+                    </ui:UiElementExists.Target>
+                  </ui:UiElementExists>
+                  <If Condition="[existeLogin]" DisplayName="If aparece login" sap2010:WorkflowViewState.IdRef="If_1">
+                    <If.Then>
+                      <Sequence DisplayName="Login" sap2010:WorkflowViewState.IdRef="Sequence_3">
+                        <ui:TypeInto DisplayName="TODO Indicate — Type Into Email" EmptyField="True" SimulateType="True" Text="[emailOdoo]" sap2010:Annotation.AnnotationText="VERIFICAR SELECTOR - pendiente de corregir con Indicate on screen" sap2010:WorkflowViewState.IdRef="TypeInto_1">
+                          <ui:TypeInto.Target>
+                            <ui:Target Selector="&lt;webctrl id='login' tag='INPUT' /&gt;" WaitForReady="COMPLETE" />
+                          </ui:TypeInto.Target>
+                        </ui:TypeInto>
+                        <ui:TypeInto DisplayName="TODO Indicate — Type Into Password" EmptyField="True" SimulateType="True" Text="[passwordOdoo]" sap2010:Annotation.AnnotationText="VERIFICAR SELECTOR - pendiente de corregir con Indicate on screen" sap2010:WorkflowViewState.IdRef="TypeInto_2">
+                          <ui:TypeInto.Target>
+                            <ui:Target Selector="&lt;webctrl id='password' tag='INPUT' /&gt;" WaitForReady="COMPLETE" />
+                          </ui:TypeInto.Target>
+                        </ui:TypeInto>
+                        <ui:Click ClickType="CLICK_SINGLE" DisplayName="TODO Indicate — Click Iniciar sesión" MouseButton="BTN_LEFT" SimulateClick="True" sap2010:Annotation.AnnotationText="VERIFICAR SELECTOR - pendiente de corregir con Indicate on screen" sap2010:WorkflowViewState.IdRef="Click_1">
+                          <ui:Click.Target>
+                            <ui:Target Selector="&lt;webctrl tag='BUTTON' type='submit' class='btn btn-primary' /&gt;" WaitForReady="COMPLETE" />
+                          </ui:Click.Target>
+                        </ui:Click>
+                        <ui:LogMessage DisplayName="Log - Login completado" Level="Info" Message="[&quot;Login completado&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_2" />
+                      </Sequence>
+                    </If.Then>
+                  </If>
+                  <ui:Click ClickType="CLICK_SINGLE" DisplayName="TODO Indicate — Click Acciones (engrane)" MouseButton="BTN_LEFT" sap2010:Annotation.AnnotationText="VERIFICAR SELECTOR - pendiente de corregir con Indicate on screen (icono de engrane junto al título de la vista)" sap2010:WorkflowViewState.IdRef="Click_5">
+                    <ui:Click.Target>
+                      <ui:Target Selector="&lt;webctrl tag='I' class='fa fa-fw fa-cog' /&gt;" WaitForReady="COMPLETE" />
+                    </ui:Click.Target>
+                  </ui:Click>
+                  <ui:Click ClickType="CLICK_SINGLE" DisplayName="TODO Indicate — Click Importar registros" MouseButton="BTN_LEFT" sap2010:Annotation.AnnotationText="VERIFICAR SELECTOR - pendiente de corregir con Indicate on screen (opción dentro del menú Acciones)" sap2010:WorkflowViewState.IdRef="Click_2">
+                    <ui:Click.Target>
+                      <ui:Target Selector="&lt;webctrl tag='SPAN' class='*o_import_menu*' /&gt;" WaitForReady="COMPLETE" />
+                    </ui:Click.Target>
+                  </ui:Click>
+                  <ui:Click ClickType="CLICK_SINGLE" DisplayName="Click Subir archivo de datos" MouseButton="BTN_LEFT" sap2010:Annotation.AnnotationText="Clic real (sin SimulateClick): Chrome solo abre el diálogo de archivos con un clic de usuario real." sap2010:WorkflowViewState.IdRef="Click_3">
+                    <ui:Click.Target>
+                      <ui:Target Selector="&lt;webctrl tag='BUTTON' class='btn btn-primary o_import_file' /&gt;" WaitForReady="COMPLETE" />
+                    </ui:Click.Target>
+                  </ui:Click>
+                  <ui:WindowScope DisplayName="TODO Indicate - diálogo nativo de Windows, verificar en pantalla real" Selector="&lt;wnd app='chrome.exe' cls='#32770' /&gt;" sap2010:Annotation.AnnotationText="TODO Indicate - diálogo nativo de Windows, verificar en pantalla real" sap2010:WorkflowViewState.IdRef="WindowScope_1">
+                    <ui:WindowScope.Body>
+                      <ActivityAction x:TypeArguments="x:Object">
+                        <ActivityAction.Argument>
+                          <DelegateInArgument x:TypeArguments="x:Object" Name="ContextTarget" />
+                        </ActivityAction.Argument>
+                        <Sequence DisplayName="Do" sap2010:WorkflowViewState.IdRef="Sequence_4">
+                          <ui:TypeInto DisplayName="Type Into Nombre de archivo (diálogo Windows)" EmptyField="True" SimulateType="True" Text="[in_rutaArchivo]" sap2010:Annotation.AnnotationText="Campo Edit real del diálogo Abrir: hay 3 controles con ctrlid 1148 (ComboBoxEx32 &gt; ComboBox &gt; Edit); solo el Edit acepta el texto." sap2010:WorkflowViewState.IdRef="TypeInto_3">
+                            <ui:TypeInto.Target>
+                              <ui:Target Selector="&lt;wnd cls='Edit' ctrlid='1148' /&gt;" WaitForReady="COMPLETE" />
+                            </ui:TypeInto.Target>
+                          </ui:TypeInto>
+                          <ui:Click ClickType="CLICK_SINGLE" DisplayName="Click Abrir (diálogo Windows)" MouseButton="BTN_LEFT" SimulateClick="True" sap2010:Annotation.AnnotationText="Botón Abrir del diálogo de Windows (ctrlid 1 = botón Aceptar estándar, no depende del idioma)." sap2010:WorkflowViewState.IdRef="Click_9">
+                            <ui:Click.Target>
+                              <ui:Target Selector="&lt;wnd cls='Button' ctrlid='1' /&gt;" WaitForReady="COMPLETE" />
+                            </ui:Click.Target>
+                          </ui:Click>
+                        </Sequence>
+                      </ActivityAction>
+                    </ui:WindowScope.Body>
+                  </ui:WindowScope>
+                  <ui:LogMessage DisplayName="Log - Archivo subido" Level="Info" Message="[&quot;Archivo subido al importador&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_3" />
+                  <ui:SelectItem DisplayName="Select Item Hoja" Item="[in_nombreHoja]" sap2010:WorkflowViewState.IdRef="SelectItem_1">
+                    <ui:SelectItem.Target>
+                      <ui:Target Selector="&lt;webctrl tag='SELECT' name='o_import_sheet' /&gt;" WaitForReady="COMPLETE" />
+                    </ui:SelectItem.Target>
+                  </ui:SelectItem>
+                  <ui:LogMessage DisplayName="Log - Hoja seleccionada" Level="Info" Message="[&quot;Hoja seleccionada: &quot; &amp; in_nombreHoja]" sap2010:WorkflowViewState.IdRef="LogMessage_4" />
+                  <ui:GetAttribute Attribute="selecteditem" DisplayName="Get Attribute - hoja seleccionada" sap2010:WorkflowViewState.IdRef="GetAttribute_1">
+                    <ui:GetAttribute.Result>
+                      <OutArgument x:TypeArguments="x:Object">[atributoHoja]</OutArgument>
+                    </ui:GetAttribute.Result>
+                    <ui:GetAttribute.Target>
+                      <ui:Target Selector="&lt;webctrl tag='SELECT' name='o_import_sheet' /&gt;" WaitForReady="COMPLETE" />
+                    </ui:GetAttribute.Target>
+                  </ui:GetAttribute>
+                  <Assign x:TypeArguments="x:String" DisplayName="Assign hojaSeleccionadaReal" To="[hojaSeleccionadaReal]" Value="[If(atributoHoja Is Nothing, String.Empty, atributoHoja.ToString().Trim())]" sap2010:WorkflowViewState.IdRef="Assign_1" />
+                  <If Condition="[hojaSeleccionadaReal &lt;&gt; in_nombreHoja]" DisplayName="If hoja no coincide (reintento)" sap2010:WorkflowViewState.IdRef="If_3">
+                    <If.Then>
+                      <Sequence DisplayName="Reintentar selección de hoja" sap2010:WorkflowViewState.IdRef="Sequence_10">
+                        <ui:LogMessage DisplayName="Log - Hoja no coincide" Level="Warn" Message="[&quot;La hoja seleccionada no coincide. Esperada: &quot; &amp; in_nombreHoja &amp; &quot; | Real: &quot; &amp; hojaSeleccionadaReal &amp; &quot; | Archivo: &quot; &amp; in_rutaArchivo]" sap2010:WorkflowViewState.IdRef="LogMessage_10" />
+                        <Delay DisplayName="Delay 1 s (antes)" Duration="00:00:01" sap2010:WorkflowViewState.IdRef="Delay_1" />
+                        <ui:SelectItem DisplayName="Select Item Hoja (reintento)" Item="[in_nombreHoja]" sap2010:WorkflowViewState.IdRef="SelectItem_2">
+                          <ui:SelectItem.Target>
+                            <ui:Target Selector="&lt;webctrl tag='SELECT' name='o_import_sheet' /&gt;" WaitForReady="COMPLETE" />
+                          </ui:SelectItem.Target>
+                        </ui:SelectItem>
+                        <Delay DisplayName="Delay 1 s (después)" Duration="00:00:01" sap2010:WorkflowViewState.IdRef="Delay_2" />
+                        <ui:GetAttribute Attribute="selecteditem" DisplayName="Get Attribute - hoja seleccionada (reintento)" sap2010:WorkflowViewState.IdRef="GetAttribute_2">
+                          <ui:GetAttribute.Result>
+                            <OutArgument x:TypeArguments="x:Object">[atributoHoja]</OutArgument>
+                          </ui:GetAttribute.Result>
+                          <ui:GetAttribute.Target>
+                            <ui:Target Selector="&lt;webctrl tag='SELECT' name='o_import_sheet' /&gt;" WaitForReady="COMPLETE" />
+                          </ui:GetAttribute.Target>
+                        </ui:GetAttribute>
+                        <Assign x:TypeArguments="x:String" DisplayName="Assign hojaSeleccionadaReal (reintento)" To="[hojaSeleccionadaReal]" Value="[If(atributoHoja Is Nothing, String.Empty, atributoHoja.ToString().Trim())]" sap2010:WorkflowViewState.IdRef="Assign_2" />
+                      </Sequence>
+                    </If.Then>
+                  </If>
+                  <If Condition="[hojaSeleccionadaReal = in_nombreHoja]" DisplayName="If hoja correcta" sap2010:WorkflowViewState.IdRef="If_4">
+                    <If.Then>
+                      <Sequence DisplayName="Then - probar e importar" sap2010:WorkflowViewState.IdRef="Sequence_11">
+                        <Delay DisplayName="Delay 2 s - esperar que Odoo refresque la vista previa de la hoja" Duration="00:00:02" sap2010:Annotation.AnnotationText="El select ya muestra la hoja correcta, pero Odoo recarga la vista previa de forma asíncrona. Sin esta espera, 'Probar' valida contra la hoja anterior." sap2010:WorkflowViewState.IdRef="Delay_3" />
+                  <ui:Click ClickType="CLICK_SINGLE" DisplayName="Click Probar" MouseButton="BTN_LEFT" SimulateClick="True" sap2010:WorkflowViewState.IdRef="Click_6">
+                    <ui:Click.Target>
+                      <ui:Target Selector="&lt;webctrl tag='BUTTON' class='btn btn-secondary' innertext='Probar' /&gt;" WaitForReady="COMPLETE" />
+                    </ui:Click.Target>
+                  </ui:Click>
+                  <ui:UiElementExists DisplayName="Element Exists - Todo parece correcto (15 s)" sap2010:WorkflowViewState.IdRef="UiElementExists_2">
+                    <ui:UiElementExists.Exists>
+                      <OutArgument x:TypeArguments="x:Boolean">[validacionOk]</OutArgument>
+                    </ui:UiElementExists.Exists>
+                    <ui:UiElementExists.Target>
+                      <ui:Target Selector="&lt;webctrl tag='P' class='alert alert-info*' innertext='Todo parece correcto*' /&gt;" TimeoutMS="15000" WaitForReady="COMPLETE" />
+                    </ui:UiElementExists.Target>
+                  </ui:UiElementExists>
+                  <If Condition="[validacionOk]" DisplayName="If Odoo validó" sap2010:Annotation.AnnotationText="Sin excepciones: si no aparece 'Todo parece correcto' se registra Warn, se omite la importación y se sigue con el logout y cierre." sap2010:WorkflowViewState.IdRef="If_2">
+                    <If.Then>
+                      <Sequence DisplayName="Then - importar" sap2010:WorkflowViewState.IdRef="Sequence_6">
+                        <ui:LogMessage DisplayName="Log - Validación OK" Level="Info" Message="[&quot;Validación de Odoo: Todo parece correcto&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_5" />
+                        <ui:Click ClickType="CLICK_SINGLE" DisplayName="Click Importar (final)" MouseButton="BTN_LEFT" SimulateClick="True" sap2010:WorkflowViewState.IdRef="Click_4">
+                          <ui:Click.Target>
+                            <ui:Target Selector="&lt;webctrl tag='BUTTON' class='btn btn-primary' innertext='Importar' /&gt;" WaitForReady="COMPLETE" />
+                          </ui:Click.Target>
+                        </ui:Click>
+                        <ui:LogMessage DisplayName="Log - Importación confirmada" Level="Info" Message="[&quot;Importación confirmada para: &quot; &amp; in_rutaArchivo]" sap2010:WorkflowViewState.IdRef="LogMessage_6" />
+                      </Sequence>
+                    </If.Then>
+                    <If.Else>
+                      <Sequence DisplayName="Else - omitir archivo" sap2010:WorkflowViewState.IdRef="Sequence_9">
+                        <ui:LogMessage DisplayName="Log - Validación no confirmada" Level="Warn" Message="[&quot;Odoo no confirmó 'Todo parece correcto' para [&quot; &amp; in_tipoImportador &amp; &quot;]: &quot; &amp; in_rutaArchivo &amp; &quot; -- se omite este archivo y se continúa&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_9" />
+                      </Sequence>
+                    </If.Else>
+                  </If>
+                      </Sequence>
+                    </If.Then>
+                    <If.Else>
+                      <Sequence DisplayName="Else - hoja incorrecta tras 2 intentos" sap2010:WorkflowViewState.IdRef="Sequence_12">
+                        <ui:LogMessage DisplayName="Log - Hoja incorrecta tras 2 intentos" Level="Error" Message="[&quot;No se pudo seleccionar la hoja correcta tras 2 intentos: &quot; &amp; in_rutaArchivo]" sap2010:WorkflowViewState.IdRef="LogMessage_11" />
+                      </Sequence>
+                    </If.Else>
+                  </If>
+                  <ui:Click ClickType="CLICK_SINGLE" DisplayName="TODO Indicate — Click avatar de usuario" MouseButton="BTN_LEFT" SimulateClick="True" sap2010:Annotation.AnnotationText="VERIFICAR SELECTOR - pendiente de corregir con Indicate on screen (avatar arriba a la derecha)" sap2010:WorkflowViewState.IdRef="Click_7">
+                    <ui:Click.Target>
+                      <ui:Target Selector="&lt;webctrl tag='IMG' class='*o_user_avatar*' /&gt;" WaitForReady="COMPLETE" />
+                    </ui:Click.Target>
+                  </ui:Click>
+                  <ui:Click ClickType="CLICK_SINGLE" DisplayName="TODO Indicate — Click Cerrar sesión" MouseButton="BTN_LEFT" SimulateClick="True" sap2010:Annotation.AnnotationText="VERIFICAR SELECTOR - pendiente de corregir con Indicate on screen (opción Cerrar sesión del menú del avatar)" sap2010:WorkflowViewState.IdRef="Click_8">
+                    <ui:Click.Target>
+                      <ui:Target Selector="&lt;webctrl tag='A' href='*/web/session/logout*' /&gt;" WaitForReady="COMPLETE" />
+                    </ui:Click.Target>
+                  </ui:Click>
+                  <ui:CloseTab DisplayName="Close Tab" sap2010:WorkflowViewState.IdRef="CloseTab_1" />
+                </Sequence>
+              </ActivityAction>
+            </ui:OpenBrowser.Body>
+          </ui:OpenBrowser>
+          <ui:LogMessage DisplayName="Log - Sesión cerrada" Level="Info" Message="[&quot;Sesión cerrada y navegador cerrado&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_7" />
+        </Sequence>
+      </TryCatch.Try>
+      <TryCatch.Catches>
+        <Catch x:TypeArguments="s:Exception" sap2010:WorkflowViewState.IdRef="Catch`1_1">
+          <ActivityAction x:TypeArguments="s:Exception">
+            <ActivityAction.Argument>
+              <DelegateInArgument x:TypeArguments="s:Exception" Name="exception" />
+            </ActivityAction.Argument>
+            <Sequence DisplayName="Catch" sap2010:WorkflowViewState.IdRef="Sequence_7">
+              <ui:LogMessage DisplayName="Log - Fallo carga Odoo" Level="Error" Message="[&quot;Fallo al cargar en Odoo [&quot; &amp; in_tipoImportador &amp; &quot;] el archivo: &quot; &amp; in_rutaArchivo &amp; &quot; | Detalle: &quot; &amp; exception.Message]" sap2010:WorkflowViewState.IdRef="LogMessage_8" />
+            </Sequence>
+          </ActivityAction>
+        </Catch>
+      </TryCatch.Catches>
+    </TryCatch>
+  </Sequence>
+</Activity>
